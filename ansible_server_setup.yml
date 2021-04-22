@@ -1,0 +1,29 @@
+---
+  - hosts: all
+    become: yes
+    tasks:
+    - name: Install Git
+      apt:
+        name: git
+        state: present
+        update_cache: yes
+    - name: Clone GitHub repository in which the spam filter SMTP server is located
+      ansible.builtin.git:
+        repo: 'https://github.com/cesargmr2107/SpamFilterServer.git'
+        dest: '/etc/spamfilter'
+    - name: Install python dependencies
+      apt:
+        name:
+          - python3
+          - python3-venv
+          - virtualenv
+          - python3-virtualenv
+        state: present 
+    - name: Manually create the project's virtualenv
+      command:
+        cmd: virtualenv /etc/spamfilter/venv -p python3.7
+        creates: "/etc/spamfilter/venv"
+    - name: Install specified python requirements in indicated (virtualenv)
+      pip:
+        requirements: /etc/spamfilter/requirements.txt
+        virtualenv: /etc/spamfilter/venv

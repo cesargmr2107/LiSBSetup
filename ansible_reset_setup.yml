@@ -1,0 +1,16 @@
+---
+  - hosts: all
+    become: yes
+    tasks:
+    - name: Delete cloned SMTP server repository
+      file:
+        state: absent
+        path: /etc/spamfilter
+    - name: Remove python dependencies
+      apt:
+        name:
+          - python3
+          - python3-venv
+          - virtualenv
+          - python3-virtualenv
+        purge: yes 
