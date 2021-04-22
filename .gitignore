@@ -1,7 +1,5 @@
-/.terraform
-/.terraform.lock.hcl
+/.terraform*
+/terraform*
 /secret-scripts
-/terraform.tfstate
-/terraform.tfstate.backup
 /variables.tf
 /keys
