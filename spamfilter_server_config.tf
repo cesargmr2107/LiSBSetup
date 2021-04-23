@@ -24,7 +24,7 @@ resource "aws_instance" "SpamFilterServer" {
         aws_security_group.allow_everything.id
     ]
 
-    provisioner "local-exec" {
+    provisioner "ansible-setup" {
         command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i '${self.public_ip},' -u admin --private-key keys/id_rsa ansible_server_setup.yml"
     }
     
