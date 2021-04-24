@@ -1,0 +1,7 @@
+---
+  - hosts: all
+    tasks:
+    - name: Copy debug SMTP server script to remote server
+      copy:
+        src: prod-scripts/launch_debug_destination.py
+        dest: ~/

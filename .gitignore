@@ -1,5 +1,5 @@
 /.terraform*
 /terraform*
-/secret-scripts
+/private-scripts
 /variables.tf
 /keys

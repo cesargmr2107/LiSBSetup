@@ -2,10 +2,10 @@
 /* VPN SERVER INSTANCE CONFIGURATION FILE */
 
 /*SpamFilter SMTP server instance */
-resource "aws_instance" "SpamFilterServer" {
+resource "aws_instance" "RemoteSMTPServer" {
   
     // Debian 10 Buster AMI
-	ami           = "ami-04e905a52ec8010b2"
+    ami           = "ami-04e905a52ec8010b2"
 
     // Instance type chosen by user
     instance_type = var.instance_type
@@ -25,9 +25,9 @@ resource "aws_instance" "SpamFilterServer" {
     ]
 
     provisioner "remote-exec" {
-    	inline = [":"]		
+        inline = [":"]		
 		connection {
-			host = "${self.public_ip}"
+            host = "${self.public_ip}"
 			type        = "ssh"
 			user        = "admin"
 			private_key = "${file("keys/id_rsa")}"
@@ -35,10 +35,11 @@ resource "aws_instance" "SpamFilterServer" {
     }
 
     provisioner "local-exec" {
-        command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i '${self.public_ip},' -u admin --private-key keys/id_rsa ansible_server_setup.yml"
+        command = "sleep 5; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i '${self.public_ip},' -u admin --private-key keys/id_rsa ansible_debug_setup.yml"
     }
     
     tags = {
-        Name = "SpamFilterServer"
+        Name = "RemoteSMTPServer"
     }
 }
+
