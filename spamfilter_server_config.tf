@@ -35,7 +35,7 @@ resource "aws_instance" "SpamFilterServer" {
     }
 
     provisioner "local-exec" {
-        command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i '${self.public_ip},' -u admin --private-key keys/id_rsa ansible_server_setup.yml"
+        command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i '${self.public_ip},' -u admin --private-key keys/id_rsa provisioning-setup/ansible_server_setup.yml"
     }
     
     tags = {
