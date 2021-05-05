@@ -22,7 +22,7 @@
     - name: Manually create the project's virtualenv
       command:
         cmd: virtualenv /etc/spamfilter/venv -p python3.7
-        creates: "/etc/spamfilter/venv"
+        creates: /etc/spamfilter/venv
     - name: Install specified python requirements in indicated (virtualenv)
       pip:
         requirements: /etc/spamfilter/requirements.txt

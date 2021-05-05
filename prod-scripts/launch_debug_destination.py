@@ -1,7 +1,9 @@
-import smtpd
-import asyncore
+import asyncio
+import sys
 import socket
 
+from aiosmtpd.controller import Controller
+from aiosmtpd.handlers import Debugging
 
 # Get private IP
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -12,8 +14,10 @@ s.close()
 # Configure port
 port = 1025
 
-# Launch DebuggingServer
-server = smtpd.DebuggingServer((server_ip, port), None)
+# Launch Debugging server
+handler = Debugging(sys.stdout)
+controller = Controller(handler=handler, hostname=server_ip, port=port)
+controller.start()
 print(f"Running SMTP Debug Server on destination: ({server_ip}:{port})")
 print("Waiting for emails...")
-asyncore.loop()
+asyncio.get_event_loop().run_forever()
