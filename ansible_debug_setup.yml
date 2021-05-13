@@ -6,6 +6,7 @@
       copy:
         src: prod-scripts/launch_debug_destination.py
         dest: /etc/spamfilter/
+        mode: u+x
     - name: Install python dependencies
       apt:
         name:

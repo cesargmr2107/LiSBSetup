@@ -11,6 +11,10 @@
       ansible.builtin.git:
         repo: 'https://github.com/cesargmr2107/SpamFilterServer.git'
         dest: '/etc/spamfilter'
+    - name: Add execution permissions to the SMTP server launcher script
+      file:
+        path: /etc/spamfilter/launcher.py
+        mode: u+x
     - name: Install python dependencies
       apt:
         name:
