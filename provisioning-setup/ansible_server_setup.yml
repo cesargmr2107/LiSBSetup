@@ -15,6 +15,12 @@
       file:
         path: /etc/spamfilter/launcher.py
         mode: u+x
+    - name: Add execution permissions to the SMTP server scripts directory
+      file:
+        path: /etc/spamfilter/scripts/
+        state: directory
+        recurse: yes
+        mode: u+x
     - name: Install python dependencies
       apt:
         name:

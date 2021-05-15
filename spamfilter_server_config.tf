@@ -24,6 +24,9 @@ resource "aws_instance" "SpamFilterServer" {
         aws_security_group.allow_everything.id
     ]
 
+    // S3 full access profile
+    iam_instance_profile = "${aws_iam_instance_profile.EC2FullS3AccessProfile.name}"
+
     provisioner "remote-exec" {
     	inline = [":"]		
 		connection {
@@ -42,3 +45,47 @@ resource "aws_instance" "SpamFilterServer" {
         Name = "SpamFilterServer"
     }
 }
+
+/* IAM role that allows S3 full access */
+resource "aws_iam_role" "EC2FullS3AccessRole" {
+    name = "EC2FullS3AccessRole"
+
+    assume_role_policy = jsonencode({
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Action": "sts:AssumeRole",
+                "Principal": {
+                    "Service": "ec2.amazonaws.com"
+                },
+                "Effect": "Allow",
+                "Sid": ""
+            }
+        ]
+    })
+}
+
+resource "aws_iam_role_policy" "EC2FullS3AccessPolicy" {
+  name = "EC2FullS3AccessPolicy"
+  role = "${aws_iam_role.EC2FullS3AccessRole.id}"
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+        "Action": [
+            "s3:*"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+        }
+    ]
+  })
+
+}
+
+resource "aws_iam_instance_profile" "EC2FullS3AccessProfile" {
+  name = "EC2FullS3AccessProfile"
+  role = "${aws_iam_role.EC2FullS3AccessRole.name}"
+}
+
