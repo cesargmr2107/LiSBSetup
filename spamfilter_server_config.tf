@@ -27,6 +27,8 @@ resource "aws_instance" "SpamFilterServer" {
     // S3 full access profile
     iam_instance_profile = "${aws_iam_instance_profile.EC2FullS3AccessProfile.name}"
 
+    // Provisioners for Ansible configuration
+
     provisioner "remote-exec" {
     	inline = [":"]		
 		connection {
@@ -42,11 +44,13 @@ resource "aws_instance" "SpamFilterServer" {
     }
     
     tags = {
-        Name = "SpamFilterServer"
+        Name = "SpamFilterServer",
+        Snapshot = "true"
     }
 }
 
-/* IAM role that allows S3 full access */
+/* IAM ROLE, POLICY AND PROFILE THAT ALLOW S3 FULL ACCESS */
+
 resource "aws_iam_role" "EC2FullS3AccessRole" {
     name = "EC2FullS3AccessRole"
 
@@ -88,4 +92,3 @@ resource "aws_iam_instance_profile" "EC2FullS3AccessProfile" {
   name = "EC2FullS3AccessProfile"
   role = "${aws_iam_role.EC2FullS3AccessRole.name}"
 }
-
