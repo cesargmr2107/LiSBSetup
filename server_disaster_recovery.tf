@@ -2,8 +2,8 @@
 
 /* AUTOMATED SNAPSHOT CREATION WITH LIFECYCLE MANAGER */
 
-resource "aws_iam_role" "dlm_lifecycle_role" {
-    name = "dlm_lifecycle_role"
+resource "aws_iam_role" "DLMLifecycleRole" {
+    name = "DLMLifecycleRole"
 
     assume_role_policy = jsonencode({
         "Version": "2012-10-17",
@@ -20,9 +20,9 @@ resource "aws_iam_role" "dlm_lifecycle_role" {
     })
 }
 
-resource "aws_iam_role_policy" "dlm_lifecycle_policy" {
-    name = "dlm_lifecycle_policy"
-    role = aws_iam_role.dlm_lifecycle_role.id
+resource "aws_iam_role_policy" "DLMLifecyclePolicy" {
+    name = "DLMLifecyclePolicy"
+    role = aws_iam_role.DLMLifecycleRole.id
 
     policy = jsonencode({
         "Version": "2012-10-17",
@@ -52,7 +52,7 @@ resource "aws_iam_role_policy" "dlm_lifecycle_policy" {
 
 resource "aws_dlm_lifecycle_policy" "DLMAutomatedSnapshots" {
   description        = "Automated EBS snapshots with DLM"
-  execution_role_arn = aws_iam_role.dlm_lifecycle_role.arn
+  execution_role_arn = aws_iam_role.DLMLifecycleRole.arn
   state              = "ENABLED"
 
   policy_details {

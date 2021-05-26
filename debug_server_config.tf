@@ -4,8 +4,8 @@
 /*SpamFilter SMTP server instance */
 resource "aws_instance" "RemoteSMTPServer" {
   
-    // Debian 10 Buster AMI
-    ami           = "ami-04e905a52ec8010b2"
+    // Server AMI
+	ami           = var.instance_ami
 
     // Instance type chosen by user
     instance_type = var.instance_type
