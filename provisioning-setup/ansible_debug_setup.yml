@@ -4,8 +4,9 @@
     tasks:
     - name: Copy debug SMTP server script to remote server
       copy:
-        src: ../prod-scripts/launch_debug_destination.py
-        dest: /etc/spamfilter/
+        src: templates/launch_debug_destination.py
+        dest: /home/admin
+        owner: admin
         mode: u+x
     - name: Install python dependencies
       apt:
@@ -17,10 +18,10 @@
         state: present 
     - name: Manually create the debugging virtualenv
       command:
-        cmd: virtualenv /etc/spamfilter/venv -p python3.7
-        creates: /etc/spamfilter/venv
+        cmd: virtualenv /home/admin/venv -p python3.7
+        creates: /home/admin/venv
     - name: Install aiosmtpd module for debugging server
       pip:
         name:
           - aiosmtpd
-        virtualenv: /etc/spamfilter/venv
+        virtualenv: /home/admin/venv

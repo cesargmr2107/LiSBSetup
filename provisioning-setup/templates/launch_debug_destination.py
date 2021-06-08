@@ -1,4 +1,4 @@
-#!/etc/spamfilter/venv/bin/python3.7
+#!/home/admin/venv/bin/python3.7
 
 import asyncio
 import sys

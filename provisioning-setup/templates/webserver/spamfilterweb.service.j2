@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve SpamFilterWeb
+After=network.target
+
+[Service]
+User=admin
+Group=www-data
+WorkingDirectory={{ base_dir }}/web-app
+Environment="PATH={{ base_dir }}venv/bin"
+ExecStart={{ base_dir }}/venv/bin/uwsgi --ini spamfilterweb.ini
+
+[Install]
+WantedBy=multi-user.target

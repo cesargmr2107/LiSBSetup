@@ -1,0 +1,12 @@
+[Unit]
+Description=Server SMTP for spam filtering
+After=network.target
+
+[Service]
+User=admin
+Group=admin
+WorkingDirectory={{ base_dir }}
+ExecStart={{ base_dir }}launcher.py
+
+[Install]
+WantedBy=multi-user.target

@@ -1,39 +1,108 @@
 ---
   - hosts: all
     become: yes
+    vars:
+      base_dir: '/var/www/spamfilter/'
     tasks:
-    - name: Install Git
+    
+    # Install dependencies
+
+    - name: Install necessary dependencies 
       apt:
-        name: git
-        state: present
+        name: ['git', 'nginx', 'python3-pip', 'python3-dev', 'build-essential', 'libssl-dev', 'libffi-dev', 'python3-setuptools', 'python3', 'python3-venv', 'virtualenv', 'python3-virtualenv']
+        state: latest
         update_cache: yes
+
+    # Setting up working directory
+
     - name: Clone GitHub repository in which the spam filter SMTP server is located
       ansible.builtin.git:
         repo: 'https://github.com/cesargmr2107/SpamFilterServer.git'
-        dest: '/etc/spamfilter'
+        dest: "{{ base_dir }}"
+
     - name: Add execution permissions to the SMTP server launcher script
       file:
-        path: /etc/spamfilter/launcher.py
+        path: "{{ base_dir }}launcher.py"
         mode: u+x
+
     - name: Add execution permissions to the SMTP server scripts directory
       file:
-        path: /etc/spamfilter/scripts/
+        path: "{{ base_dir }}core/scripts/"
         state: directory
         recurse: yes
         mode: u+x
-    - name: Install python dependencies
-      apt:
-        name:
-          - python3
-          - python3-venv
-          - virtualenv
-          - python3-virtualenv
-        state: present 
+
+    # Set up virtual environment for SMTP server
+
     - name: Manually create the project's virtualenv
       command:
-        cmd: virtualenv /etc/spamfilter/venv -p python3.7
-        creates: /etc/spamfilter/venv
+        cmd: python3.7 -m venv {{ base_dir }}venv
+        creates: "{{ base_dir }}venv"
+
     - name: Install specified python requirements in indicated (virtualenv)
       pip:
-        requirements: /etc/spamfilter/requirements.txt
-        virtualenv: /etc/spamfilter/venv
+        requirements: "{{ base_dir }}requirements.txt"
+        virtualenv: "{{ base_dir }}venv"
+
+
+        # Set up flask web server with uWSGI and NGINX  
+  
+    - name: Change owner to admin and group to www-data
+      file:
+        dest: "{{ base_dir }}"
+        owner: admin
+        group: www-data
+        recurse: yes
+
+    - name: Delete default nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Create systemd unit file that reloads the server upon reboot
+      template:
+        src: templates/webserver/spamfilterweb.service.j2
+        dest: /etc/systemd/system/spamfilterweb.service
+    
+    - name: Start uWSGI service
+      systemd: 
+        name: spamfilterweb
+        state: started
+    
+    - name: Enable uWSGI service
+      command: 
+        cmd: systemctl enable spamfilterweb
+    
+    - name: Configure NGINX for proxy requests
+      template:
+        src: templates/webserver/spamfilterweb.j2
+        dest: /etc/nginx/sites-available/spamfilterweb
+    
+
+    - name: Create symlink to enabled sites
+      file:
+        src: /etc/nginx/sites-available/spamfilterweb
+        dest: /etc/nginx/sites-enabled/spamfilterweb
+        state: link
+
+    - name: Restart NGINX
+      service:
+        name: nginx
+        state: restarted
+
+    # Set up SpamFilterServer as systemd daemon
+
+    - name: Create systemd unit file that reloads the SMTP server upon reboot
+      template:
+        src: templates/spamfilterserver.service.j2
+        dest: /etc/systemd/system/spamfilterserver.service
+    
+    - name: Enable SMTP service
+      systemd: 
+        name: spamfilterserver
+        state: started
+    
+    - name: Enable SMTP service
+      command: 
+        cmd: systemctl enable spamfilterserver
+     
