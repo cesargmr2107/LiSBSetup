@@ -2,6 +2,7 @@
 
 /* AUTOMATED SNAPSHOT CREATION WITH LIFECYCLE MANAGER */
 
+/*
 resource "aws_iam_role" "DLMLifecycleRole" {
     name = "DLMLifecycleRole"
 
@@ -83,10 +84,11 @@ resource "aws_dlm_lifecycle_policy" "DLMAutomatedSnapshots" {
     }
   }
 }
-
+*/
 /* AUTO RECOVERY */
 
 /* Notifications */
+/*
 
 resource "aws_sns_topic" "ServerRecoveryTopic" {
 	name = "ServerRecoveryTopic"
@@ -98,8 +100,11 @@ resource "aws_sns_topic_subscription" "ServerRecoveryEmailSubscription" {
 	endpoint  = "${var.sns_email}"
 }
 
+*/
+
 /* CloudWatch Alarm that monitors system status check and triggers autorecovery in case the check fails */
 
+/*
 resource "aws_cloudwatch_metric_alarm" "ServerRecoveryAlarm" {
 	alarm_name                = "ServerRecoveryAlarm"
 	comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -112,7 +117,7 @@ resource "aws_cloudwatch_metric_alarm" "ServerRecoveryAlarm" {
 	alarm_description         = "This alarm triggers server recovery when system status check fails"
 	
 	dimensions = {
-		InstanceId = "${aws_instance.SpamFilterServer.id}"
+		InstanceId = "${aws_instance.LiSBServer.id}"
 	}
 	
 	alarm_actions = [
@@ -120,3 +125,4 @@ resource "aws_cloudwatch_metric_alarm" "ServerRecoveryAlarm" {
 		"arn:aws:automate:${var.aws_region}:ec2:recover"
 	]
 }
+*/

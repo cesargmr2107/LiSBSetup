@@ -1,8 +1,8 @@
 
 /* VPN SERVER INSTANCE CONFIGURATION FILE */
 
-/*SpamFilter SMTP server instance */
-resource "aws_instance" "SpamFilterServer" {
+/*LiSB SMTP server instance */
+resource "aws_instance" "LiSBServer" {
   
     // Server AMI
 	ami           = var.instance_ami
@@ -44,7 +44,7 @@ resource "aws_instance" "SpamFilterServer" {
     }
     
     tags = {
-        Name = "SpamFilterServer",
+        Name = "LiSBServer",
         Snapshot = "true"
     }
 }

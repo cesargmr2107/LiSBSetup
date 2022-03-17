@@ -2,7 +2,7 @@
   - hosts: all
     become: yes
     vars:
-      base_dir: '/var/www/spamfilter/'
+      base_dir: '/var/www/lisb/'
     tasks:
     
     # Install dependencies
@@ -17,7 +17,7 @@
 
     - name: Clone GitHub repository in which the spam filter SMTP server is located
       ansible.builtin.git:
-        repo: 'https://github.com/cesargmr2107/SpamFilterServer.git'
+        repo: 'https://github.com/sing-group/LIsB.git'
         dest: "{{ base_dir }}"
 
     - name: Add execution permissions to the SMTP server launcher script
@@ -90,7 +90,7 @@
         name: nginx
         state: restarted
 
-    # Set up SpamFilterServer as systemd daemon
+    # Set up LiSBServer as systemd daemon
 
     - name: Create systemd unit file that reloads the SMTP server upon reboot
       template:

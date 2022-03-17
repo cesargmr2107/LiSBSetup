@@ -1,7 +1,7 @@
 
 /* VPN SERVER INSTANCE CONFIGURATION FILE */
 
-/*SpamFilter SMTP server instance */
+/*LiSB SMTP server instance */
 resource "aws_instance" "RemoteSMTPServer" {
   
     // Server AMI
