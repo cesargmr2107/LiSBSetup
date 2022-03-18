@@ -9,7 +9,25 @@
 
     - name: Install necessary dependencies 
       apt:
-        name: ['git', 'nginx', 'python3-pip', 'python3-dev', 'build-essential', 'libssl-dev', 'libffi-dev', 'python3-setuptools', 'python3', 'python3-venv', 'virtualenv', 'python3-virtualenv']
+        name: [
+          'git', 
+          'nginx', 
+          'python3-pip', 
+          'python3-dev', 
+          'build-essential', 
+          'libssl-dev', 
+          'libffi-dev', 
+          'python3-setuptools', 
+          'python3', 
+          'python3-venv', 
+          'virtualenv', 
+          'python3-virtualenv',
+          'libblas3',
+          'liblapack3',
+          'liblapack-dev',
+          'libblas-dev',
+          'gfortran'
+        ]
         state: latest
         update_cache: yes
 
@@ -17,7 +35,7 @@
 
     - name: Clone GitHub repository in which the spam filter SMTP server is located
       ansible.builtin.git:
-        repo: 'https://github.com/sing-group/LIsB.git'
+        repo: 'https://github.com/sing-group/LiSB.git'
         dest: "{{ base_dir }}"
 
     - name: Add execution permissions to the SMTP server launcher script
@@ -40,12 +58,10 @@
         creates: "{{ base_dir }}venv"
 
     - name: Install specified python requirements in indicated (virtualenv)
-      pip:
-        requirements: "{{ base_dir }}requirements.txt"
-        virtualenv: "{{ base_dir }}venv"
+      command:
+        cmd: "{{ base_dir }}venv/bin/pip install -r {{ base_dir }}requirements.txt --upgrade"
 
-
-        # Set up flask web server with uWSGI and NGINX  
+    # Set up flask web server with uWSGI and NGINX  
   
     - name: Change owner to admin and group to www-data
       file:
@@ -61,28 +77,27 @@
 
     - name: Create systemd unit file that reloads the server upon reboot
       template:
-        src: templates/webserver/spamfilterweb.service.j2
-        dest: /etc/systemd/system/spamfilterweb.service
+        src: templates/webserver/lisbweb.service.j2
+        dest: /etc/systemd/system/lisbweb.service
     
     - name: Start uWSGI service
       systemd: 
-        name: spamfilterweb
+        name: lisbweb
         state: started
     
     - name: Enable uWSGI service
       command: 
-        cmd: systemctl enable spamfilterweb
+        cmd: systemctl enable lisbweb
     
     - name: Configure NGINX for proxy requests
       template:
-        src: templates/webserver/spamfilterweb.j2
-        dest: /etc/nginx/sites-available/spamfilterweb
-    
+        src: templates/webserver/lisbweb.j2
+        dest: /etc/nginx/sites-available/lisbweb
 
     - name: Create symlink to enabled sites
       file:
-        src: /etc/nginx/sites-available/spamfilterweb
-        dest: /etc/nginx/sites-enabled/spamfilterweb
+        src: /etc/nginx/sites-available/lisbweb
+        dest: /etc/nginx/sites-enabled/lisbweb
         state: link
 
     - name: Restart NGINX
@@ -94,15 +109,15 @@
 
     - name: Create systemd unit file that reloads the SMTP server upon reboot
       template:
-        src: templates/spamfilterserver.service.j2
-        dest: /etc/systemd/system/spamfilterserver.service
+        src: templates/lisbserver.service.j2
+        dest: /etc/systemd/system/lisbserver.service
     
     - name: Enable SMTP service
       systemd: 
-        name: spamfilterserver
+        name: lisbserver
         state: started
     
     - name: Enable SMTP service
       command: 
-        cmd: systemctl enable spamfilterserver
+        cmd: systemctl enable lisbserver
      

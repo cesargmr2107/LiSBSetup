@@ -5,7 +5,7 @@
     - name: Delete cloned SMTP server repository
       file:
         state: absent
-        path: /etc/spamfilter
+        path: /etc/lisb
     - name: Remove python dependencies
       apt:
         name:

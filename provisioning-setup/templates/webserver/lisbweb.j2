@@ -4,6 +4,6 @@ server {
 
     location / {
         include uwsgi_params;
-        uwsgi_pass unix:{{ base_dir }}web-app/spamfilterweb.sock;
+        uwsgi_pass unix:{{ base_dir }}web-app/lisbweb.sock;
     }
 }
